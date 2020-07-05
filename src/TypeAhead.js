@@ -20,6 +20,7 @@ const lottieAnimationOptions = {
 const Status = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
+  SET_WORD: "SET_WORD",
 };
 
 function TypeAhead(props) {
@@ -31,17 +32,18 @@ function TypeAhead(props) {
   useEffect(() => {
     // if a searchTerm is not an "" after a change, we should make the page active
     const activeSearchTerm = searchTerm.trim();
-    if (activeSearchTerm) {
+    if (activeSearchTerm && status !== Status.SET_WORD) {
       setStatus(Status.ACTIVE);
     } else {
       setStatus(Status.INACTIVE);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
   // Set up keyboard and click listeners
   useEffect(() => {
     const handleClick = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      if (containerRef.current && !containerRef.current.contains(event.target) && status !== Status.SET_WORD) {
         setStatus(Status.INACTIVE);
       }
     };
@@ -60,6 +62,7 @@ function TypeAhead(props) {
       document.removeEventListener("mousedown", handleClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerRef]);
 
   /*
@@ -94,8 +97,7 @@ function TypeAhead(props) {
 
   const setActiveWord = (word) => {
     setSearchTerm(word);
-    let inputElement = containerRef.current.children.inputContainer.children.searchTerm;
-    inputElement.focus();
+    setStatus(Status.SET_WORD);
   };
 
   /*

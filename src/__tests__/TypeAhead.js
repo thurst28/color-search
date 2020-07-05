@@ -238,10 +238,10 @@ test("Clicking on a list item should populate the input with the selected item's
 
   fireEvent.click(screen.getByTestId(testCase.expectedList[1]));
   await wait(() => {
-    return expect(screen.queryByTestId(testCase.expectedList[0])).toBeNull();
+    return expect(screen.queryByTestId(testCase.expectedList[1])).toBeNull();
   });
-  screen.getByTestId(testCase.expectedList[1]);
-  testCase.unexpectedList.forEach((word) => {
+
+  [...testCase.unexpectedList, ...testCase.expectedList].forEach((word) => {
     return expect(screen.queryByTestId(word)).toBeNull();
   });
 }, 7500);
@@ -277,7 +277,7 @@ test("Pressing the enter or return key when an item is focused should populate t
 
   await fireEvent.keyDown(screen.getByTestId(testCase.expectedList[0]), { key: "Enter", code: "Enter" });
   await wait(() => {
-    return expect(screen.queryByTestId(testCase.expectedList[1])).toBeNull();
+    return expect(screen.queryByTestId(testCase.expectedList[0])).toBeNull();
   });
 
   await userEvent.type(screen.getByLabelText(/search/i), testCase.input);
@@ -303,6 +303,20 @@ test("Pressing the escape key should close the list", async () => {
   await fireEvent.keyDown(screen.getByTestId("main-container"), { key: "Escape", code: "Escape" });
 
   expect(screen.queryByTestId("WordList")).toBeNull();
+});
+
+test("Focusing the input with valid input should show list", async () => {
+  render(<TypeAhead list={MockList} />);
+
+  await userEvent.type(screen.getByLabelText(/search/i), "TEST");
+  await wait(() => {
+    return screen.getByText(/No Matches/i);
+  });
+
+  await fireEvent.keyDown(screen.getByTestId("main-container"), { key: "Escape", code: "Escape" });
+  expect(screen.queryByText(/No Matches/i)).toBeNull();
+  userEvent.click(screen.getByLabelText(/search/i));
+  screen.getByText(/No Matches/i);
 });
 
 test("No Axe violations", async () => {
