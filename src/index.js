@@ -1,5 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import TypeAhead from "./TypeAhead";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
+
+import { theme } from "./static/theme";
+import MuseoModerno from "./static/MuseoModerno-Regular.ttf";
 
 const colorsList = [
   "AliceBlue",
@@ -152,9 +157,25 @@ const colorsList = [
   "YellowGreen",
 ];
 
+const GlobalStyle = createGlobalStyle`
+    @font-face {
+        font-family: 'MuseoModerno';
+        src: local('MuseoModerno'), url(${MuseoModerno}) format('truetype');
+    }
+  body {
+    margin: 0;
+    background: #000;
+    * {
+      box-sizing: border-box;
+      font-family: 'MuseoModerno', cursive;
+    }
+  }
+`;
+
 ReactDOM.render(
-  {
-    /* <YourComponentGoesHere /> */
-  },
+  <ThemeProvider theme={theme}>
+    <TypeAhead list={colorsList} />
+    <GlobalStyle />
+  </ThemeProvider>,
   document.getElementById("root")
 );
